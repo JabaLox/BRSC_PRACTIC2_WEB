@@ -1,0 +1,133 @@
+﻿@model List<Product>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <input id="searchInput" class="form-control mr-sm-2" type="search" placeholder="Поиск..." aria-label="Поиск">
+    </div>
+</div>
+
+<div id="productList" class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-sm-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">@item.NameProduct</h5>
+                    <p class="card-text">@item.DesriptionProduct</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">@item.ManufactureNavigation.NameManufacture</li>
+                    <li class="list-group-item">@item.CategoryNavigation.NameCategory</li>
+                    <li class="list-group-item">@item.CostProduct</li>
+                    <li class="list-group-item">Кол-во на складе: @item.CountInStockProduct</li> 
+                </ul>
+                <div class="card-body">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <form asp-action="AddToCart" asp-controller="Order">
+                            <input type="hidden" name="article" value="@item.ArticleProduct" />
+                            <input type="number" name="quantity" value="1" min="1" max="@item.CountInStockProduct" /> 
+                            <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+                        </form>
+                    }
+                    @if (!User.IsInRole("1") && User.Identity.IsAuthenticated)
+                    {
+                        <a asp-area="" asp-controller="Product" asp-action="EditProduct" class="card-link edit-link" asp-route-ArticleProduct="@item.ArticleProduct">Изменить</a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+   
+</div>
+
+<style>
+    .alert-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0, 0, 0, 0.5); 
+        z-index: 9999;
+    }
+
+    .alert-box {
+        background-color: #f8d7da; 
+        border-color: #f5c6cb; 
+        color: #721c24; 
+        padding: 20px;
+        border: 1px solid;
+        border-radius: .25rem;
+        position: relative;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        cursor: pointer;
+    }
+</style>
+
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert-container">
+        <div class="alert-box">
+            <span class="close-btn" onclick="closeAlert()">×</span>
+            @TempData["Error"]
+        </div>
+    </div>
+}
+
+<script>
+    // Функция для закрытия сообщения при клике на крестик
+    function closeAlert() {
+        var alertContainer = document.querySelector('.alert-container');
+        if (alertContainer) {
+            alertContainer.remove(); 
+        }
+    }
+
+    // Функция для закрытия сообщения при клике вне области сообщения
+    window.addEventListener('click', function(event) {
+        var alertBox = document.querySelector('.alert-box');
+        if (alertBox && !alertBox.contains(event.target)) {
+            closeAlert(); 
+        }
+    });
+</script>
+
+<script>
+    // Функция для поиска продуктов по введенному тексту
+    function searchProducts() {
+        var input, filter, productList, productCards, productName, i;
+        input = document.getElementById('searchInput');
+        filter = input.value.trim().toUpperCase(); //лишние пробелы и приводим к верхнему регистру
+        productList = document.getElementById('productList');
+        productCards = productList.getElementsByClassName('card');
+
+        for (i = 0; i < productCards.length; i++) {
+            productName = productCards[i].getElementsByClassName("card-title")[0].innerText.toUpperCase(); // Получаем текст названия продукта и приводим к верхнему регистру
+
+            if (productName.indexOf(filter) > -1) {
+                productCards[i].parentNode.style.display = ""; // элемент, если он соответствует запросу
+            } else {
+                productCards[i].parentNode.style.display = "none"; // элемент, если он не соответствует запросу
+            }
+        }
+    }
+
+    // обработчик события на ввод текста в поле поиска
+    document.getElementById('searchInput').addEventListener('input', searchProducts);
+
+    
+    searchProducts();
+</script>

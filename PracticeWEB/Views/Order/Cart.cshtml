@@ -1,0 +1,146 @@
+﻿@model List<PracticeWEB.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Cart";
+}
+
+<h2 class="text-white">Корзина</h2>
+
+<table class="table text-white">
+    <thead>
+        <tr>
+            <th>Продукт</th>
+            <th>Кол-во</th>
+            <th>Цена</th>
+            <th>Общая сумма</th>
+            <th></th> <!-- Пустая ячейка для кнопки удаления -->
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Product.NameProduct</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <a asp-controller="Order" asp-action="DecreaseCartItem" asp-route-article="@item.Product.ArticleProduct">-</a>
+                        <div class="mx-2">@item.Count</div>
+                        <a asp-controller="Order" asp-action="IncreaseCartItem" asp-route-article="@item.Product.ArticleProduct">+</a>
+                    </div>
+                </td>
+                <td>@item.Product.CostProduct</td>
+                <td>@(item.Count * item.Product.CostProduct)</td>
+                <td>
+                    <a asp-controller="Order" asp-action="RemoveCartItem" asp-route-article="@item.Product.ArticleProduct">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (Model.Any())
+{
+    <div class="text-center">
+        <a asp-controller="Order" asp-action="Checkout" class="btn btn-primary">Оформить заказ</a>
+    </div>
+}
+@{
+    decimal totalCost = 0;
+}
+
+@foreach (var item in Model)
+{
+    totalCost += (item.Product.CostProduct ?? 0) * item.Count;
+}
+
+<div class="text-white">
+    <h3>Общая сумма: @totalCost</h3>
+</div>
+
+
+<style>
+    .alert-container {
+        position: fixed; 
+        top: 20px; 
+        right: 20px;
+        z-index: 1000; 
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .alert-box {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+        padding: 20px;
+        border: 1px solid;
+        border-radius: .25rem;
+        position: relative;
+    }
+
+    .close-btn {
+        cursor: pointer;
+        float: right;
+        font-weight: bold;
+        font-size: 20px;
+        line-height: 1;
+        margin-left: 10px; 
+    }
+
+    .alert-container {
+        position: relative; 
+        padding: 10px; 
+        margin-bottom: 15px;
+    }
+
+    .alert-primary, .alert-danger {
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .alert-primary {
+        background-color: #cce5ff; 
+    }
+
+    .alert-danger {
+        background-color: #f8d7da; 
+    }
+</style>
+
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert-container">
+        <div class="alert-primary">
+            <span class="close-btn" onclick="closeAlert()">×</span>
+            @TempData["Success"]
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert-container">
+        <div class="alert-danger">
+            <span class="close-btn" onclick="closeAlert()">×</span>
+            @TempData["Error"]
+        </div>
+    </div>
+}
+
+<script>
+    // Функция для закрытия сообщения при клике на крестик
+    function closeAlert() {
+        var alertContainers = document.querySelectorAll('.alert-container');
+        alertContainers.forEach(function (container) {
+            container.style.display = 'none';
+        });
+    }
+
+    // Функция для закрытия сообщения при клике вне области сообщения
+    window.addEventListener('click', function (event) {
+        var alertBox = document.querySelector('.alert-box');
+        if (alertBox && !alertBox.contains(event.target)) {
+            closeAlert();
+        }
+    });
+</script>

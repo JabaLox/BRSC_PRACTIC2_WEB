@@ -1,0 +1,24 @@
+﻿@model List<User>
+
+<div id="productList" class="row" >
+    @foreach (var item in Model)
+    {
+        <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@item.NameUser</h5>
+                    <p class="card-text">@item.LoginUser</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">@item.RoleUserNavigation.NameRole</li>
+                </ul>
+                <div class="card-body">
+                    <form method="post" action="@Url.Action("EditUser")">
+                        <input type="hidden" name="userId" value="@item.IdUser" />
+                        <a asp-area="" asp-controller="User" asp-action="EditUser" class="btn btn-primary" asp-route-IdUser="@item.IdUser">Изменить</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>

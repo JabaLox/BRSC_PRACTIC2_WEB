@@ -1,0 +1,81 @@
+﻿@model Product
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 centered-form">
+            <h2 class="text-center text-white">Добавление продукта</h2>
+            <form class="text-white" asp-controller="Product" asp-action="CreateProduct">
+                <div class="form-group">
+                    <label for="login">Артикул</label>
+                    <input type="text" class="form-control" name="ArticleProduct" id="login" placeholder="Ввод для артикула">
+                </div>
+                <div class="form-group">
+                    <label for="password">Название продукта</label>
+                    <input type="text" class="form-control" name="NameProduct" id="password" placeholder="Ввод названия">
+                </div>
+                <div class="form-group ">
+                    <label class="text-white" for="name">Описание продукта</label>
+                    <input type="text" class="form-control" name="DesriptionProduct" id="name" placeholder="Ввод описания">
+                </div>
+
+                <div class="form-group ">
+                    <label class="text-white" for="Category">Категория продукта</label>
+                    @Html.DropDownList("Category", ViewBag.CategoryList as SelectList, new { @class = "form-control" })
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="text-white" for="Manufacture">Производитель</label>
+                    @Html.DropDownList("Manufacture", ViewBag.ManufactureList as SelectList, new { @class = "form-control" })
+                    <span asp-validation-for="Manufacture" class="text-danger"></span>
+                </div>
+
+                <div class="form-group ">
+                    <label class="text-white" for="name">Цена</label>
+                    <input type="text" class="form-control" name="CostProduct" id="price" placeholder="Введите цену" data-validate="numeric">
+                </div>
+
+                <div class="form-group ">
+                    <label class="text-white" for="name">Размер скидки</label>
+                    <input type="text" class="form-control" name="DiscountProduct" id="quantity" placeholder="Введите количество на складе" data-validate="numeric">
+                </div>
+
+                <div class="form-group ">
+                    <label class="text-white" for="name">Кол-во на складе</label>
+                    <input type="text" class="form-control" name="CountInStockProduct" id="count" placeholder="Введите количество на складе" data-validate="numeric">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block mt-3">Добавить</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@if (TempData["DangerMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["DangerMessage"]
+    </div>
+}
+
+<script>
+    // Получаем все элементы input, для которых нужна валидация
+    var inputElements = document.querySelectorAll('input[type="text"][data-validate="numeric"]');
+
+    // Добавляем обработчик события на ввод текста для каждого поля
+    inputElements.forEach(function (inputElement) {
+        inputElement.addEventListener('input', function () {
+            // Удаляем все символы, кроме цифр и точки
+            this.value = this.value.replace(/[^0-9.]/g, '');
+
+            // Если введена более одной точки, оставляем только первую
+            if (this.value.split('.').length > 2) {
+                this.value = this.value.replace(/\.+$/, '');
+            }
+        });
+    });
+</script>

@@ -1,0 +1,34 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 centered-form">
+            <h2 class="text-center text-white">Регистрация</h2>
+            <form class="text-white" asp-controller="User" asp-action="RegisterApi">
+                <div class="form-group">
+                    <label for="login">Логин</label>
+                    <input type="text" class="form-control" name="login" id="login" placeholder="Enter your login">
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password">
+                </div>
+                <div class="form-group ">
+                    <label class="text-white" for="name">Имя</label>
+                    <input type="text" class="form-control" name="name" id="name" placeholder="Enter your name">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block mt-3">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@if (TempData["DangerMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["DangerMessage"]
+    </div>
+}
